@@ -1,0 +1,68 @@
+import java.util.*;
+
+public class NumberOfWays {
+
+    static final int MOD = 1000000007;
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        int n = sc.nextInt();
+        int m = sc.nextInt();
+
+        ArrayList<int[]>[] adj = new ArrayList[n];
+
+        for (int i = 0; i < m; i++) {
+            int u = sc.nextInt();
+            int v = sc.nextInt();
+            int w = sc.nextInt();
+
+            if (adj[u] == null) adj[u] = new ArrayList<>();
+            if (adj[v] == null) adj[v] = new ArrayList<>();
+
+            adj[u].add(new int[]{v, w});
+            adj[v].add(new int[]{u, w});   // bidirectional
+        }
+
+        long[] dist = new long[n];
+        Arrays.fill(dist, Long.MAX_VALUE);
+        dist[0] = 0;
+
+        int[] ways = new int[n];
+        ways[0] = 1;
+
+        PriorityQueue<long[]> pq = new PriorityQueue<>(
+                Comparator.comparingLong(a -> a[0])
+        );
+
+        pq.offer(new long[]{0, 0}); // {distance, node}
+
+        while (!pq.isEmpty()) {
+
+            long[] cur = pq.poll();
+            long d = cur[0];
+            int node = (int) cur[1];
+
+            if (d > dist[node]) continue;
+
+            for (int[] edge : adj[node]) {
+                int neighbor = edge[0];
+                long wt = edge[1];
+
+                // shorter path found
+                if (d + wt < dist[neighbor]) {
+                    dist[neighbor] = d + wt;
+                    ways[neighbor] = ways[node];
+                    pq.offer(new long[]{dist[neighbor], neighbor});
+                }
+                // another shortest path found
+                else if (d + wt == dist[neighbor]) {
+                    ways[neighbor] = (ways[neighbor] + ways[node]) % MOD;
+                }
+            }
+        }
+
+        System.out.println(ways[n - 1] % MOD);
+    }
+}
