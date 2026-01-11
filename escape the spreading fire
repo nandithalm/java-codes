@@ -1,0 +1,111 @@
+#escape the spreading fire (leetcode)
+import java.util.*;
+
+public class Solution {
+    static final int INF = 1_000_000_000;
+    static final int[] dr = {-1, 1, 0, 0};
+    static final int[] dc = {0, 0, -1, 1};
+
+    public int maximumMinutes(int[][] grid) {
+        int m = grid.length, n = grid[0].length;
+
+        // 1) Fire BFS time calculation
+        int[][] fireTime = new int[m][n];
+        for (int[] row : fireTime) Arrays.fill(row, INF);
+
+        Queue<int[]> q = new LinkedList<>();
+
+        // Multi-source BFS start: all initial fire cells
+        for (int r = 0; r < m; r++) {
+            for (int c = 0; c < n; c++) {
+                if (grid[r][c] == 1) {
+                    fireTime[r][c] = 0;
+                    q.offer(new int[]{r, c});
+                }
+            }
+        }
+
+        // BFS for fire spread
+        while (!q.isEmpty()) {
+            int[] cur = q.poll();
+            int r = cur[0], c = cur[1];
+            int t = fireTime[r][c];
+
+            for (int k = 0; k < 4; k++) {
+                int nr = r + dr[k], nc = c + dc[k];
+                if (nr < 0 || nr >= m || nc < 0 || nc >= n) continue;
+                if (grid[nr][nc] == 2) continue; // wall
+
+                if (fireTime[nr][nc] > t + 1) {
+                    fireTime[nr][nc] = t + 1;
+                    q.offer(new int[]{nr, nc});
+                }
+            }
+        }
+
+        // If cannot reach even with 0 waiting
+        if (!canReach(grid, fireTime, 0)) return -1;
+
+        // If can wait forever
+        if (canReach(grid, fireTime, INF)) return INF;
+
+        // Binary search maximum waiting time
+        int lo = 0, hi = INF;
+        while (lo < hi) {
+            int mid = lo + (hi - lo + 1) / 2;
+            if (canReach(grid, fireTime, mid)) lo = mid;
+            else hi = mid - 1;
+        }
+        return lo;
+    }
+
+    private boolean canReach(int[][] grid, int[][] fireTime, int wait) {
+        int m = grid.length, n = grid[0].length;
+
+        // if fire reaches start before or at wait time => impossible
+        if (wait >= fireTime[0][0]) return false;
+
+        int[][] dist = new int[m][n];
+        for (int[] row : dist) Arrays.fill(row, -1);
+
+        Queue<int[]> q = new LinkedList<>();
+        dist[0][0] = wait;
+        q.offer(new int[]{0, 0});
+
+        while (!q.isEmpty()) {
+            int[] cur = q.poll();
+            int r = cur[0], c = cur[1];
+            int t = dist[r][c];
+
+            // reached safehouse
+            if (r == m - 1 && c == n - 1) return true;
+
+            for (int k = 0; k < 4; k++) {
+                int nr = r + dr[k], nc = c + dc[k];
+                if (nr < 0 || nr >= m || nc < 0 || nc >= n) continue;
+                if (grid[nr][nc] == 2) continue; // wall
+
+                int nt = t + 1;
+
+                // already visited earlier
+                if (dist[nr][nc] != -1 && dist[nr][nc] <= nt) continue;
+
+                // safehouse special rule: nt <= fireTime[end]
+                if (nr == m - 1 && nc == n - 1) {
+                    if (nt <= fireTime[nr][nc]) {
+                        dist[nr][nc] = nt;
+                        q.offer(new int[]{nr, nc});
+                    }
+                } else {
+                    // normal cell rule: nt < fireTime[cell]
+                    if (nt < fireTime[nr][nc]) {
+                        dist[nr][nc] = nt;
+                        q.offer(new int[]{nr, nc});
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+}
