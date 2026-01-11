@@ -1,4 +1,7 @@
 #escape the spreading fire (leetcode)
+# multisource BFS and Binary Search 
+
+
 import java.util.*;
 
 public class Solution {
