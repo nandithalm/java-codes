@@ -1,53 +1,43 @@
+# dijkstra's algorithm 
+
 import java.util.*;
 
-public class DijkstraAlgo {
+class Solution {
+    public int networkDelayTime(int[][] times, int n, int k) {
 
-    public static void main(String[] args) {
-
-        Scanner sc = new Scanner(System.in);
-
-        int n = sc.nextInt();   // number of nodes
-        int m = sc.nextInt();   // number of edges
-
+        // Adjacency list: adj[u] = list of {v, w}
         ArrayList<int[]>[] adj = new ArrayList[n + 1];
+        for (int i = 1; i <= n; i++) {
+            adj[i] = new ArrayList<>();
+        }
 
-        // reading edges
-        for (int i = 0; i < m; i++) {
-            int u = sc.nextInt();
-            int v = sc.nextInt();
-            int w = sc.nextInt();
-
-            if (adj[u] == null) {
-                adj[u] = new ArrayList<>();
-            }
-            if (adj[v] == null) {
-                adj[v] = new ArrayList<>();
-            }
-
+        // Build graph
+        for (int[] t : times) {
+            int u = t[0];
+            int v = t[1];
+            int w = t[2];
             adj[u].add(new int[]{v, w});
         }
 
-        int src = sc.nextInt();   // source node
-
+        // Distance array
         int[] dist = new int[n + 1];
         Arrays.fill(dist, Integer.MAX_VALUE);
-        dist[src] = 0;
+        dist[k] = 0;
 
+        // Min-heap: {distance, node}
         PriorityQueue<int[]> pq = new PriorityQueue<>(
                 Comparator.comparingInt(a -> a[0])
         );
 
-        pq.offer(new int[]{0, src});
+        pq.offer(new int[]{0, k});
 
+        // Dijkstra
         while (!pq.isEmpty()) {
-
             int[] cur = pq.poll();
             int d = cur[0];
             int node = cur[1];
 
             if (d > dist[node]) continue;
-
-            if (adj[node] == null) continue;
 
             for (int[] edge : adj[node]) {
                 int neighbor = edge[0];
@@ -60,9 +50,16 @@ public class DijkstraAlgo {
             }
         }
 
-        // printing distance
+        // Find the maximum time
+        int ans = 0;
         for (int i = 1; i <= n; i++) {
-            System.out.println(i + " : " + dist[i]);
+            if (dist[i] == Integer.MAX_VALUE) {
+                return -1;   // unreachable node
+            }
+            ans = Math.max(ans, dist[i]);
         }
+
+        return ans;
     }
 }
+
