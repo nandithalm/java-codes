@@ -1,4 +1,7 @@
 #number of ways to arrive at destination(leetcode)
+dijkstra's algo
+
+
 import java.util.*;
 
 public class NumberOfWays {
