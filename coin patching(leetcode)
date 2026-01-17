@@ -1,0 +1,39 @@
+greedy coin patching
+
+import java.util.Arrays;
+
+public class MinCoinsToReachTarget {
+
+    public static int minPatches(int[] coins, int target) {
+        Arrays.sort(coins);   // Step 1: sort coins
+
+        long maxReach = 0;    // Maximum sum we can form so far
+        int patches = 0;      // Number of coins added
+        int i = 0;            // Index for coins array
+
+        // Step 2: Continue until we cover [1, target]
+        while (maxReach < target) {
+
+            // Step 3: If current coin extends the range
+            if (i < coins.length && coins[i] <= maxReach + 1) {
+                maxReach += coins[i];
+                i++;
+            } 
+            // Step 4: Otherwise, add a new coin (patch)
+            else {
+                maxReach += (maxReach + 1);
+                patches++;
+            }
+        }
+
+        return patches;
+    }
+
+    // Driver code for testing
+    public static void main(String[] args) {
+        System.out.println(minPatches(new int[]{1, 4, 10}, 19));       // 2
+        System.out.println(minPatches(new int[]{1, 4, 10, 5, 7, 19}, 19)); // 1
+        System.out.println(minPatches(new int[]{1, 1, 1}, 20));        // 3
+    }
+}
+
