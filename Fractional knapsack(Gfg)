@@ -1,45 +1,40 @@
 greedy approach 
 
-import java.util.*;
-
 class Solution {
+    public double fractionalKnapsack(int[] val, int[] wt, int capacity) {
+        // code here
+        double ans = 0;
+        int n = val.length;
+        int[][] pair = new int[n][2];
 
-    static double fractionalKnapsack(int capacity, int[] wt, int[] val) {
-
-        int n = wt.length;
-
-        // Each row: {value, weight, ratio}
-        double[][] items = new double[n][3];
-
-        // Step 1: Store value, weight, and ratio
-        for (int i = 0; i < n; i++) {
-            items[i][0] = val[i];               // value
-            items[i][1] = wt[i];                // weight
-            items[i][2] = (double) val[i] / wt[i]; // value/weight ratio
+        for(int i=0; i<n; i++){
+            pair[i][0] = val[i];
+            pair[i][1] = wt[i];
         }
 
-        // Step 2: Sort by ratio in descending order
-        Arrays.sort(items, (a, b) -> Double.compare(b[2], a[2]));
+        Arrays.sort(pair, (a,b)->{
 
-        double maxValue = 0.0;
-        int remainingCapacity = capacity;
+            double r1 = (double)a[0]/a[1];
+            double r2 = (double)b[0]/b[1];
 
-        // Step 3: Pick items greedily
-        for (int i = 0; i < n && remainingCapacity > 0; i++) {
+            return Double.compare(r2,r1);
+        });
 
-            if (items[i][1] <= remainingCapacity) {
-                // Take full item
-                maxValue += items[i][0];
-                remainingCapacity -= items[i][1];
-            } else {
-                // Take fractional part
-                double fraction = remainingCapacity / items[i][1];
-                maxValue += items[i][0] * fraction;
-                remainingCapacity = 0;
+        for(int i=0; i<n; i++){
+
+            int v = pair[i][0];
+            int w = pair[i][1];
+
+            if(w <= capacity){
+                ans += (double)v;
+                capacity -= w;
+            }
+            else{
+                ans += ((double)v/w)*((double)capacity);
+                break;
             }
         }
 
-        // Step 4: Round to 6 decimal places
-        return Math.round(maxValue * 1_000_000.0) / 1_000_000.0;
+        return ans;
     }
 }
