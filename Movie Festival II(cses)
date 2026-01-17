@@ -1,0 +1,60 @@
+#greedy algo(using treemaps as well)
+
+import java.util.*;
+
+public class MovieFestivalII {
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        int n = sc.nextInt();
+        int k = sc.nextInt();
+
+        int[][] movies = new int[n][2];
+
+        for (int i = 0; i < n; i++) {
+            movies[i][0] = sc.nextInt(); // start time
+            movies[i][1] = sc.nextInt(); // end time
+        }
+
+        // Step 1: Sort movies by ending time
+        Arrays.sort(movies, (a, b) -> a[1] - b[1]);
+
+        // TreeMap to act as a multiset of free times
+        TreeMap<Integer, Integer> freeMembers = new TreeMap<>();
+
+        // Initially all k members are free at time 0
+        freeMembers.put(0, k);
+
+        int answer = 0;
+
+        // Step 2: Assign movies greedily
+        for (int i = 0; i < n; i++) {
+
+            int start = movies[i][0];
+            int end = movies[i][1];
+
+            // Find member free at or before movie start
+            Integer availableTime = freeMembers.floorKey(start);
+
+            if (availableTime != null) {
+                answer++;
+
+                // Decrease count of that free time
+                int count = freeMembers.get(availableTime);
+                if (count == 1) {
+                    freeMembers.remove(availableTime);
+                } else {
+                    freeMembers.put(availableTime, count - 1);
+                }
+
+                // Add new end time
+                freeMembers.put(end, freeMembers.getOrDefault(end, 0) + 1);
+            }
+        }
+
+        System.out.println(answer);
+        sc.close();
+    }
+}
