@@ -1,0 +1,45 @@
+greedy approach 
+
+import java.util.*;
+
+class Solution {
+
+    static double fractionalKnapsack(int capacity, int[] wt, int[] val) {
+
+        int n = wt.length;
+
+        // Each row: {value, weight, ratio}
+        double[][] items = new double[n][3];
+
+        // Step 1: Store value, weight, and ratio
+        for (int i = 0; i < n; i++) {
+            items[i][0] = val[i];               // value
+            items[i][1] = wt[i];                // weight
+            items[i][2] = (double) val[i] / wt[i]; // value/weight ratio
+        }
+
+        // Step 2: Sort by ratio in descending order
+        Arrays.sort(items, (a, b) -> Double.compare(b[2], a[2]));
+
+        double maxValue = 0.0;
+        int remainingCapacity = capacity;
+
+        // Step 3: Pick items greedily
+        for (int i = 0; i < n && remainingCapacity > 0; i++) {
+
+            if (items[i][1] <= remainingCapacity) {
+                // Take full item
+                maxValue += items[i][0];
+                remainingCapacity -= items[i][1];
+            } else {
+                // Take fractional part
+                double fraction = remainingCapacity / items[i][1];
+                maxValue += items[i][0] * fraction;
+                remainingCapacity = 0;
+            }
+        }
+
+        // Step 4: Round to 6 decimal places
+        return Math.round(maxValue * 1_000_000.0) / 1_000_000.0;
+    }
+}
