@@ -58,3 +58,11 @@ public class MovieFestivalII {
         sc.close();
     }
 }
+
+#CONCEPT ON TREEMAP
+map.firstKey();      // smallest key
+map.lastKey();       // largest key
+map.ceilingKey(15);  // smallest key ≥ 15
+map.floorKey(15);    // largest key ≤ 15
+map.lowerKey(20);    // just smaller than 20
+map.higherKey(20);   // just greater than 20
