@@ -1,0 +1,65 @@
+#greedy approach
+
+class Solution {
+    public int canCompleteCircuit(int[] gas, int[] cost) {
+
+        int totalGas = 0;
+        int totalCost = 0;
+
+        int tank = 0;       // current fuel
+        int start = 0;      // candidate starting index
+
+        for (int i = 0; i < gas.length; i++) {
+            totalGas += gas[i];
+            totalCost += cost[i];
+
+            tank += gas[i] - cost[i];
+
+            // If tank goes negative, reset start
+            if (tank < 0) {
+                start = i + 1;
+                tank = 0;
+            }
+        }
+
+        // If total gas is less than total cost, no solution
+        return totalGas >= totalCost ? start : -1;
+    }
+}
+
+#works fine for human understanding but not an efficient approach
+
+class Solution {
+    public int canCompleteCircuit(int[] gas, int[] cost) {
+
+        int n = gas.length;
+
+        // Try each station as a starting point
+        for (int start = 0; start < n; start++) {
+
+            int tank = 0;
+            boolean canComplete = true;
+
+            // Travel n stations in circular manner
+            for (int step = 0; step < n; step++) {
+
+                int curr = (start + step) % n;
+
+                tank += gas[curr];      // fill gas
+                tank -= cost[curr];     // travel cost
+
+                if (tank < 0) {
+                    canComplete = false;
+                    break;
+                }
+            }
+
+            if (canComplete) {
+                return start;
+            }
+        }
+
+        return -1;
+    }
+}
+
