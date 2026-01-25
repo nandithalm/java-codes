@@ -1,3 +1,4 @@
+#fast and slow pointer technique
 #linked list 
 class Solution {
     public boolean hasCycle(ListNode head) {
