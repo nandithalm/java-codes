@@ -1,0 +1,61 @@
+#linked list
+class Solution {
+    public ListNode rotateRight(ListNode head, int k) {
+
+        if (head == null || head.next == null)
+            return head;
+
+        int n = 0;
+        ListNode temp = head;
+        ListNode last = null;
+
+        // Find length and last node
+        while (temp != null) {
+            n++;
+            last = temp;
+            temp = temp.next;
+        }
+
+        k = k % n;
+        if (k == 0)
+            return head;
+
+        int pos = n - k;
+
+        temp = head;
+        int p = 1;
+
+        // Move to (n-k)th node
+        while (p != pos) {
+            temp = temp.next;
+            p++;
+        }
+
+        // Rotation
+        ListNode s = temp.next;
+        temp.next = null;
+        last.next = head;
+
+        return s;
+    }
+}
+
+/**
+ * Definition for singly-linked list.
+ */
+class ListNode {
+    int val;
+    ListNode next;
+
+    ListNode() {}
+
+    ListNode(int val) {
+        this.val = val;
+        this.next = null;
+    }
+
+    ListNode(int val, ListNode next) {
+        this.val = val;
+        this.next = next;
+    }
+}
