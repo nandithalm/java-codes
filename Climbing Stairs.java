@@ -9,6 +9,16 @@ step 1: Count the possible ways/return the minimum or possible possible ways pos
 *Sum of all stuffs(count of all ways)
 *find the min(if the Qn says)
 
+Fast DP Identification Trick (Interview Tip)
+
+If a problem has:
+
+1. choices
+2. repeating subproblems
+3. optimal result (min/max/count)
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 //recursion
 public class Main {
 
